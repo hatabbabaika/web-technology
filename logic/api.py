@@ -15,9 +15,9 @@ def __set_cors_headers__(response):
 
 def __get_options_method_response__(access_methods):
     response = make_response()
-    response.headers.add("Access-Control-Allow-Origin", "*")
-    response.headers.add('Access-Control-Allow-Headers', access_methods)
-    response.headers.add('Access-Control-Allow-Methods', "*")
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', '*')
+    response.headers.add('Access-Control-Allow-Methods', ','.join(access_methods or []))
     return response
 
 
@@ -30,7 +30,7 @@ def __get_options_method_response__(access_methods):
 @api_app.route('/group/<_id>', methods=['OPTIONS'])
 @api_app.route('/group_students/<_id>', methods=['OPTIONS'])
 @api_app.route('/student/<_id>', methods=['OPTIONS'])
-def app_faculties_options():
+def app_faculties_options(_id=None):
     try:
         return __get_options_method_response__(['OPTIONS', 'GET', 'POST', 'DELETE'])
     except:
@@ -57,9 +57,9 @@ def app_get_faculty(_id):
 @api_app.route('/faculty/<_id>', methods=['POST'])
 def app_save_faculty(_id):
     try:
-        name = request.values.get('name')
-        dean = request.values.get('dean')
-        info = request.values.get('info')
+        name = request.json.get('name')
+        dean = request.json.get('dean')
+        info = request.json.get('info')
         return __set_cors_headers__(jsonify(Faculty(_id, name, dean, info).save().read().as_dict()))
     except:
         abort(400)
@@ -94,10 +94,10 @@ def app_get_department(_id):
 def app_save_department(_id):
 
     try:
-        faculty = request.form.get('faculty')
-        name = request.form.get('name')
-        head = request.form.get('head')
-        info = request.form.get('info')
+        faculty = request.json.get('faculty')
+        name = request.json.get('name')
+        head = request.json.get('head')
+        info = request.json.get('info')
         return __set_cors_headers__(jsonify(Department(_id, faculty, name, head, info).save().read().as_dict()))
     except:
         abort(400)
@@ -132,10 +132,10 @@ def app_get_group(_id):
 def app_save_group(_id):
 
     try:
-        department = request.form.get('department')
-        name = request.form.get('name')
-        course = request.form.get('course')
-        head = request.form.get('head')
+        department = request.json.get('department')
+        name = request.json.get('name')
+        course = request.json.get('course')
+        head = request.json.get('head')
         return __set_cors_headers__(jsonify(Group(_id, department, name, course, head).save().read().as_dict()))
     except:
         abort(400)
@@ -170,10 +170,10 @@ def app_get_student(_id):
 def app_save_student(_id):
 
     try:
-        group = request.form.get('group')
-        last_name = request.form.get('last_name')
-        first_name = request.form.get('first_name')
-        patronymic = request.form.get('patronymic')
+        group = request.json.get('group')
+        last_name = request.json.get('last_name')
+        first_name = request.json.get('first_name')
+        patronymic = request.json.get('patronymic')
         return __set_cors_headers__(
             jsonify(Student(_id, group, last_name, first_name, patronymic).save().read().as_dict())
         )
