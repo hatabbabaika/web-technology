@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request, abort
 
 from .department import Department
-from .faculty import Faculty
+from .faculty import Faculty, get_faculties
 from .group import Group
 from .student import Student
 
@@ -10,12 +10,12 @@ api_app = Flask(__name__)
 
 # ФАКУЛЬТЕТЫ
 @api_app.route('/faculties', methods=['GET'])
-def get_faculties():
+def app_get_faculties():
     return jsonify(list(map(Faculty.as_dict, get_faculties())))
 
 
 @api_app.route('/faculty/<_id>', methods=['GET'])
-def get_faculty(_id):
+def app_get_faculty(_id):
     try:
         return Faculty(_id).read().as_dict()
     except:
@@ -23,7 +23,7 @@ def get_faculty(_id):
 
 
 @api_app.route('/faculty/<_id>', methods=['POST'])
-def save_faculty(_id):
+def app_save_faculty(_id):
     try:
         name = request.values.get('name')
         dean = request.values.get('dean')
@@ -34,7 +34,7 @@ def save_faculty(_id):
 
 
 @api_app.route('/faculty/<_id>', methods=['DELETE'])
-def delete_faculty(_id):
+def app_delete_faculty(_id):
     try:
         return jsonify(Faculty(_id).delete())
     except:
@@ -43,7 +43,7 @@ def delete_faculty(_id):
 
 # КАФЕДРЫ
 @api_app.route('/faculty_departments/<_id>', methods=['GET'])
-def get_departments(_id):
+def app_get_departments(_id):
     try:
         return jsonify(list(map(Department.as_dict, Faculty(_id).read_departments())))
     except:
@@ -51,7 +51,7 @@ def get_departments(_id):
 
 
 @api_app.route('/department/<_id>', methods=['GET'])
-def get_department(_id):
+def app_get_department(_id):
     try:
         return Department(_id).read().as_dict()
     except:
@@ -59,7 +59,7 @@ def get_department(_id):
 
 
 @api_app.route('/department/<_id>', methods=['POST'])
-def save_department(_id):
+def app_save_department(_id):
 
     try:
         faculty = request.form.get('faculty')
@@ -72,7 +72,7 @@ def save_department(_id):
 
 
 @api_app.route('/department/<_id>', methods=['DELETE'])
-def delete_department(_id):
+def app_delete_department(_id):
     try:
         return jsonify(Department(_id).delete())
     except:
@@ -81,7 +81,7 @@ def delete_department(_id):
 
 # ГРУППЫ
 @api_app.route('/department_groups/<_id>', methods=['GET'])
-def get_groups(_id):
+def app_get_groups(_id):
     try:
         return jsonify(list(map(Group.as_dict, Department(_id).read_groups())))
     except:
@@ -89,7 +89,7 @@ def get_groups(_id):
 
 
 @api_app.route('/group/<_id>', methods=['GET'])
-def get_group(_id):
+def app_get_group(_id):
     try:
         return Group(_id).read().as_dict()
     except:
@@ -97,7 +97,7 @@ def get_group(_id):
 
 
 @api_app.route('/group/<_id>', methods=['POST'])
-def save_group(_id):
+def app_save_group(_id):
 
     try:
         department = request.form.get('department')
@@ -110,7 +110,7 @@ def save_group(_id):
 
 
 @api_app.route('/group/<_id>', methods=['DELETE'])
-def delete_group(_id):
+def app_delete_group(_id):
     try:
         return jsonify(Group(_id).delete())
     except:
@@ -119,7 +119,7 @@ def delete_group(_id):
 
 # СТУДЕНТЫ
 @api_app.route('/group_students/<_id>', methods=['GET'])
-def get_students(_id):
+def app_get_students(_id):
     try:
         return jsonify(list(map(Student.as_dict, Group(_id).read_students())))
     except:
@@ -127,7 +127,7 @@ def get_students(_id):
 
 
 @api_app.route('/student/<_id>', methods=['GET'])
-def get_student(_id):
+def app_get_student(_id):
     try:
         return Student(_id).read().as_dict()
     except:
@@ -135,7 +135,7 @@ def get_student(_id):
 
 
 @api_app.route('/student/<_id>', methods=['POST'])
-def save_student(_id):
+def app_save_student(_id):
 
     try:
         group = request.form.get('group')
@@ -148,7 +148,7 @@ def save_student(_id):
 
 
 @api_app.route('/student/<_id>', methods=['DELETE'])
-def delete_student(_id):
+def app_delete_student(_id):
     try:
         return jsonify(Student(_id).delete())
     except:
