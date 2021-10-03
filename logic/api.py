@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, abort
+from flask import Flask, jsonify, request, abort, make_response
 
 from .department import Department
 from .faculty import Faculty, get_faculties
@@ -13,10 +13,37 @@ def __set_cors_headers__(response):
     return response
 
 
+def __get_options_method_response__(access_methods):
+    response = make_response()
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add('Access-Control-Allow-Headers', access_methods)
+    response.headers.add('Access-Control-Allow-Methods', "*")
+    return response
+
+
+# OPTIONS
+@api_app.route('/faculties', methods=['OPTIONS'])
+@api_app.route('/faculty/<_id>', methods=['OPTIONS'])
+@api_app.route('/faculty_departments/<_id>', methods=['OPTIONS'])
+@api_app.route('/department/<_id>', methods=['OPTIONS'])
+@api_app.route('/department_groups/<_id>', methods=['OPTIONS'])
+@api_app.route('/group/<_id>', methods=['OPTIONS'])
+@api_app.route('/group_students/<_id>', methods=['OPTIONS'])
+@api_app.route('/student/<_id>', methods=['OPTIONS'])
+def app_faculties_options():
+    try:
+        return __get_options_method_response__(['OPTIONS', 'GET', 'POST', 'DELETE'])
+    except:
+        abort(400)
+
+
 # ФАКУЛЬТЕТЫ
 @api_app.route('/faculties', methods=['GET'])
 def app_get_faculties():
-    return __set_cors_headers__(jsonify(list(map(Faculty.as_dict, get_faculties()))))
+    try:
+        return __set_cors_headers__(jsonify(list(map(Faculty.as_dict, get_faculties()))))
+    except:
+        abort(400)
 
 
 @api_app.route('/faculty/<_id>', methods=['GET'])
